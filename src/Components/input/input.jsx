@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
-import styles from './input.module.css'
 import axios from 'axios';
+import styles from './input.module.css';
 
 const CheckoutForm = () => {
   const [amount, setAmount] = useState(0);
   const [email, setEmail] = useState('');
   const [productName, setProductName] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Basic form validation
+    if (amount <= 0 || !email || !productName) {
+      alert('Please fill out all fields correctly.');
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const { data } = await axios.post('https://stripe-gg3x.onrender.com/api/create-checkout-session', {
@@ -25,14 +34,16 @@ const CheckoutForm = () => {
       }
     } catch (error) {
       console.error('Error creating payment intent:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className={styles.checkout_form_container} >
-      <h2 style={{color : 'black'}}>Payment</h2>
-      <form onSubmit={handleSubmit} className={styles.checkout_form} >
-        <div className="form-group">
+    <div className={styles.checkout_form_container}>
+      <h2 style={{ color: 'black' }}>Payment</h2>
+      <form onSubmit={handleSubmit} className={styles.checkout_form}>
+        <div className={styles.form_group}>
           <label htmlFor="Name">Name:</label>
           <input
             id="Name"
@@ -42,7 +53,7 @@ const CheckoutForm = () => {
             required
           />
         </div>
-        <div className= {styles.form_group}>
+        <div className={styles.form_group}>
           <label htmlFor="amount">Amount:</label>
           <input
             id="amount"
@@ -50,9 +61,10 @@ const CheckoutForm = () => {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
+            min="1"
           />
         </div>
-        <div className= {styles.form_group}>
+        <div className={styles.form_group}>
           <label htmlFor="email">Email:</label>
           <input
             id="email"
@@ -62,7 +74,9 @@ const CheckoutForm = () => {
             required
           />
         </div>
-        <button type="submit">Pay</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Processing...' : 'Pay'}
+        </button>
       </form>
     </div>
   );
