@@ -29,13 +29,13 @@ const CheckoutForm = () => {
   };
 
   return (
-    <div className={styles.checkout_form_container} style={{color : 'black'}}>
-      <h2>Checkout</h2>
+    <div className={styles.checkout_form_container} >
+      <h2 style={{color : 'black'}}>Payment</h2>
       <form onSubmit={handleSubmit} className={styles.checkout_form} >
         <div className="form-group">
-          <label htmlFor="productName">Product Name:</label>
+          <label htmlFor="Name">Name:</label>
           <input
-            id="productName"
+            id="Name"
             type="text"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
